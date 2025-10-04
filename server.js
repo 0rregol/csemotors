@@ -10,25 +10,34 @@ const env = require("dotenv").config();
 const app = express();
 const static = require("./routes/static");
 const expressLayouts = require("express-ejs-layouts");
+const baseController = require("./controllers/baseController");
+const inventoryRoute = require("./routes/inventoryRoute"); 
+const utilities = require("./utilities/")
+
 
 /* ***********************
  * View Engine and Layouts
  *************************/
 app.set("view engine", "ejs");
 app.use(expressLayouts);
-app.set("layout", "./layouts/layout"); // Correct path
+app.set("layout", "./layouts/layout"); 
 
 /* ***********************
  * Routes
  *************************/
 app.use(static);
-
+app.use(function(req, res, next){
+  res.locals.messages = utilities.messages 
+  next()
+})
 /* ***********************
  * Index Route
  *************************/
-app.get("/", function (req, res) {
-  res.render("index", { title: "Home" });
-});
+// app.get("/", function (req, res) {
+// res.render("index", { title: "Home" });
+//});
+
+app.get("/", baseController.buildHome) 
 
 /* ***********************
  * Local Server Information
@@ -43,3 +52,13 @@ const host = process.env.HOST;
 app.listen(port, () => {
   console.log(`app listening on ${host}:${port}`);
 });
+
+app.use("/inv", inventoryRoute)
+app.use(function(req, res, next){
+  res.locals.messages = utilities.messages 
+  next()
+})
+app.get("/error", baseController.throwError);
+app.use(utilities.handleErrors);
+
+

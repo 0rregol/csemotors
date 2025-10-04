@@ -1,0 +1,11 @@
+<% if (title) { %>
+  <h1><%= title %></h1>
+<% } else {
+  res.redirect('/')} 
+%>
+<%- messages() %>
+<% if (detailDisplay) { %>
+  <%- detailDisplay %>
+<% } else { %>
+  <p class="notice">Sorry, vehicle details could not be loaded.</p>
+<% } %>
