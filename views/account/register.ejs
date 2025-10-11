@@ -1,0 +1,86 @@
+<h1><%= title %></h1>
+
+
+<%- messages() %>
+
+<% if (errors) { %>
+    <ul class="notice">
+    <% errors.forEach(error => { %>
+        <li><%= error.msg %></li>
+    <%  }) %>
+    </ul>
+<% } %>
+
+    <div class="form-wrapper">
+        <form id="registrationForm" action="/account/register" method="post" class="account-form">
+
+         
+            <label for="account_firstname">First Name:</label>
+            <input type="text" 
+                   id="account_firstname" 
+                   name="account_firstname" 
+                   required 
+                   placeholder="Enter your first name"
+                   value="<%= locals.account_firstname %>">
+
+           
+            <label for="account_lastname">Last Name:</label>
+            <input type="text" 
+                   id="account_lastname" 
+                   name="account_lastname" 
+                   required 
+                   placeholder="Enter your last name"
+                   value="<%= locals.account_lastname %>"> 
+                  
+            <label for="account_email">Email:</label>
+            <input type="email" 
+                   id="account_email" 
+                   name="account_email" 
+                   required 
+                   placeholder="Enter a valid email address"
+                   value="<%= locals.account_email %>">
+
+            <label for="account_password">Password:</label>
+            <div class="password-input-container">
+                <input type="password" 
+                       id="account_password" 
+                       name="account_password" 
+                       required 
+                       pattern="^(?=.*\d)(?=.*[A-Z])(?=.*[a-z])(?=.*[^A-Za-z0-9\s]).{12,}$"
+                       title="The password must be at least 12 characters long and contain at least 1 capital letter, 1 number, and 1 special character.."
+                       placeholder="Min 12 chars, 1 uppercase, 1 number, 1 special char">
+                
+               
+                
+            </div>
+
+            <p class="password-requirements-text">
+                The password must be at least 12 characters long and contain at least 1 capital letter, 1 number, and 1 special character.
+            </p>
+
+           
+            <button type="submit" disabled>Register Account</button>
+            
+          
+            <script>
+                document.addEventListener('DOMContentLoaded', () => {
+                   
+                    const submitButton = document.querySelector('#registrationForm button[type="submit"]');
+                    if (submitButton) {
+                        submitButton.removeAttribute('disabled');
+                    }
+
+             
+                    const passwordInput = document.getElementById('account_password');
+                    const toggleButton = document.getElementById('passwordToggle');
+                    
+                    if (passwordInput && toggleButton) {
+                        toggleButton.addEventListener('click', function() {
+                            const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+                            passwordInput.setAttribute('type', type);
+                        });
+                    }
+                });
+            </script>
+        </form>
+    </div>

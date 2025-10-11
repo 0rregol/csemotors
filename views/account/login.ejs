@@ -1,0 +1,40 @@
+<% if (title) { %>
+    <h1><%= title %></h1>
+<% } else { %>
+    <h1>Login</h1>
+<% } %>
+
+<%- messages() %>
+
+<div id="login-form-wrapper">
+    <h2>Iniciar Sesión</h2>
+    
+    <form id="loginForm" action="/account/login" method="post">
+        
+        <label for="account_email">Email:</label>
+        <input 
+            type="email" 
+            id="account_email" 
+            name="account_email" 
+            placeholder="email" 
+            required
+        >
+        
+        <label for="account_password">Password:</label>
+        <input 
+            type="password" 
+            id="account_password" 
+            name="account_password" 
+            placeholder="Password" 
+            required
+        >
+        
+        <button type="submit">Login</button>
+    </form>
+    
+    <div class="registration-link">
+        <a href="/account/register" title="Click to register a new account">
+            Don't have an account? Sign up here.
+        </a>
+    </div>
+</div>

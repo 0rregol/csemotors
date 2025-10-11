@@ -1,0 +1,17 @@
+<%# Content for management.ejs %>
+
+<% if (title) { %>
+    <h1><%= title %></h1>
+<% } else {
+    res.redirect('/')
+} %>
+
+<%- messages() %>
+
+<div class="management-links">
+    <p>Welcome to the Vehicle Management area. Please select an option below:</p>
+    <ul>
+        <li><a href="/inv/add-classification">Add New Classification</a></li>
+        <li><a href="/inv/add-inventory">Add New Vehicle</a></li>
+    </ul>
+</div>

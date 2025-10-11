@@ -3,15 +3,9 @@ const baseController = {}
 
 baseController.buildHome = async function(req, res){
   const nav = await utilities.getNav()
+  req.flash("notice", "This is a flash message.")
   res.render("index", {title: "Home", nav})
-}
-
-baseController.throwError = async function (req, res, next) {
-  const error = new Error("Intentionally triggered error from baseController.js");
-  error.status = 500;
-  next(error); 
-}
-
+  }
 
 baseController.throwError = async function (req, res, next) {
  
