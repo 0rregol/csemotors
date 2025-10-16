@@ -603,3 +603,8 @@ body {
   box-shadow: 0 0 5px rgba(92, 184, 92, 0.5); 
 }
 
+.form-wrapper button[type="submit"]:disabled {
+  background-color: #cccccc; /* Un gris claro */
+  color: #666666;           /* Texto gris oscuro */
+  cursor: not-allowed;     /* Muestra un cursor de "prohibido" */
+}

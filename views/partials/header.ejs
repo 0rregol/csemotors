@@ -1,5 +1,15 @@
 
 <header class="header-container">
    <h1 class="site-title"><a href="/" title="Return to home page">CSE Motors</a></h1> 
-    <a title="Click to log in" href="/account/login" class="account-button">My Account</a>
+ <div class="account-button">
+    <% if (locals.loggedin) { %>
+      <%# Si el usuario ha iniciado sesión, muestra esto: %>
+      <a href="/account/">Welcome <%= locals.accountData.account_firstname %></a>
+      &nbsp; | &nbsp;
+      <a href="/account/logout">Logout</a>
+    <% } else { %>
+      <%# Si el usuario NO ha iniciado sesión, muestra esto: %>
+      <a href="/account/login" title="Click to log in">My Account</a>
+    <% } %>
+</div>
 </header>

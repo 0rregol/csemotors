@@ -1,5 +1,7 @@
 const invModel = require("../models/inventory-model")
 const Util = {}
+const jwt = require("jsonwebtoken");
+require("dotenv").config();
 
 /* ************************
  * Constructs the nav HTML unordered list
@@ -23,8 +25,6 @@ Util.getNav = async function (req, res, next) {
   list += "</ul>"
   return list
 }
-
-module.exports = Util
 
 /* **************************************
 * Build the classification view HTML
@@ -58,86 +58,49 @@ Util.buildClassificationGrid = async function(data){
   }
   return grid
 }
+
 /* **************************************
  Build the vehicle detail view HTML
  * ************************************ */
 Util.buildVehicleDetail = async function(vehicle) {
-  if (!vehicle) {
-    return '<p class="notice">Error: No se proporcionaron datos del vehículo.</p>';
-  }
-
-  
-  const formattedPrice = new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: 'USD',
-      maximumFractionDigits: 0 
-  }).format(vehicle.inv_price);
-
- 
-  const formattedMileage = new Intl.NumberFormat('en-US').format(vehicle.inv_miles);
-
-  let detailHTML = '<div id="detail-wrapper">';
-  
-  
-  detailHTML += `<div class="detail-image">
-    <img src="${vehicle.inv_image}" alt="Imagen de ${vehicle.inv_make} ${vehicle.inv_model} en CSE Motors">
-  </div>`;
-  
- 
-  detailHTML += `<div class="detail-info">
-    <h2>Detalles del ${vehicle.inv_make} ${vehicle.inv_model}</h2>
-    <ul class="detail-list">
-      <!-- Precio (Resaltado) -->
-      <li class="price-highlight"><span class="detail-label">Price:</span> ${formattedPrice}</li>
-      <hr>
-      <!-- Descripción -->
-      <li><span class="detail-label">Description:</span> ${vehicle.inv_description}</li>
-      <hr>
-      <!-- Color -->
-      <li><span class="detail-label">Color:</span> ${vehicle.inv_color}</li>
-      <hr>
-      <!-- Millaje -->
-      <li><span class="detail-label">Miles:</span> ${formattedMileage}</li>
-    </ul>
-  </div>`;
-
-  detailHTML += '</div>'; 
-  
-  return detailHTML;
+    let detailView = '<div id="vehicle-detail-view">';
+    detailView += `<img src="${vehicle.inv_image}" alt="Image of ${vehicle.inv_make} ${vehicle.inv_model}">`;
+    detailView += '<div id="vehicle-details">';
+    detailView += `<h2>${vehicle.inv_make} ${vehicle.inv_model} Details</h2>`;
+    detailView += `<p><strong>Price:</strong> $${new Intl.NumberFormat('en-US').format(vehicle.inv_price)}</p>`;
+    detailView += `<p><strong>Description:</strong> ${vehicle.inv_description}</p>`;
+    detailView += `<p><strong>Color:</strong> ${vehicle.inv_color}</p>`;
+    detailView += `<p><strong>Miles:</strong> ${new Intl.NumberFormat('en-US').format(vehicle.inv_miles)}</p>`;
+    detailView += '</div>';
+    detailView += '</div>';
+    return detailView;
 }
 
-Util.messages = function() {
-  
-  return ""
-}
-
+/* ****************************************
+* Middleware For Handling Errors
+* Wrap other function in this for 
+* General Error Handling
+**************************************** */
 Util.handleErrors = (err, req, res, next) => {
   let nav = res.locals.nav;
   console.error(`Error de Servidor: ${err.message}`);
-  
- 
   const status = err.status || 500;
-  
- 
   let message;
   if (status === 404) {
     message = 'Sorry, that page could not be found.';
   } else {
-    
     message = 'Oh no! There was a crash. Maybe try a different route?';
   }
-
   res.status(status).render("errors/error", {
     title: `Error ${status}`,
     message: message,
     nav,
   });
 }
+
 Util.handleAsyncErrors = (fn) => (req, res, next) => {
     Promise.resolve(fn(req, res, next)).catch(next)
 }
-
-
 
 /* **************************************
 * Build classification list for form
@@ -160,4 +123,57 @@ Util.buildClassificationList = async function (classification_id = null) {
     classificationList += "</select>"
     return classificationList
 }
+
+/* ****************************************
+* Middleware to check token validity
+**************************************** */
+Util.checkJWTToken = (req, res, next) => {
+ if (req.cookies.jwt) {
+  jwt.verify(
+   req.cookies.jwt,
+   process.env.ACCESS_TOKEN_SECRET,
+   function (err, accountData) {
+    if (err) {
+     req.flash("notice", "Please log in")
+     res.clearCookie("jwt")
+     return res.redirect("/account/login")
+    }
+    res.locals.accountData = accountData
+    res.locals.loggedin = 1
+    next()
+   })
+ } else {
+  next()
+ }
+}
+
+/* ****************************************
+ * Check Login
+ * ************************************ */
+ Util.checkLogin = (req, res, next) => {
+  if (res.locals.loggedin) {
+    next()
+  } else {
+    req.flash("notice", "Please log in.")
+    return res.redirect("/account/login")
+  }
+ }
+
+/* ****************************************
+ * Middleware to check account type
+ * ************************************ */
+Util.checkAccountType = (req, res, next) => {
+   if (res.locals.loggedin) {
+    const accountType = res.locals.accountData.account_type;
+     if (accountType === "Employee" || accountType === "Admin") {
+      next(); 
+    } else {
+      req.flash("notice", "You do not have permission to access this page.");
+      res.redirect("/account/login");
+    }
+  } else {
+    req.flash("notice", "You must be logged in to access this page.");
+    res.redirect("/account/login");
+  }
+};
 module.exports = Util;

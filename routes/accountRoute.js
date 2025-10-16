@@ -2,9 +2,14 @@ const express = require("express");
 const router = new express.Router(); 
 const accountController = require("../controllers/accountController");
 const utilities = require("../utilities/");
+const regValidate = require("../utilities/validators/account-validation");
 router.get("/login", utilities.handleAsyncErrors(accountController.buildLogin));
-router.post("/login", utilities.handleAsyncErrors(accountController.buildLogin)); 
+router.post("/login", regValidate.loginRules(), regValidate.checkLoginData, utilities.handleAsyncErrors(accountController.accountLogin));
 router.get("/register", utilities.handleAsyncErrors(accountController.buildRegister)); 
-router.post('/register', utilities.handleAsyncErrors(accountController.registerAccount))
-
+router.post('/register', utilities.handleAsyncErrors(accountController.registerAccount));
+router.get("/", utilities.handleAsyncErrors(accountController.buildAccountManagement)); 
+router.get("/update/:account_id", utilities.handleAsyncErrors(accountController.buildUpdateAccountView));
+router.post("/update-info", regValidate.updateAccountRules(), regValidate.checkUpdateData, utilities.handleAsyncErrors(accountController.updateAccountInfo));
+router.post("/update-password", regValidate.updatePasswordRules(), regValidate.checkUpdateData, utilities.handleAsyncErrors(accountController.updatePassword));
+router.get("/logout", utilities.handleAsyncErrors(accountController.logout));
 module.exports = router;
