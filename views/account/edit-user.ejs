@@ -1,0 +1,19 @@
+<h1>Edit Account: <%= locals.userName %></h1>
+<%- messages() %>
+
+<div class="form-wrapper">
+    <form action="/account/update-type" method="post">
+        <p><strong>Name:</strong> <%= locals.userName %></p>
+        <p><strong>Email:</strong> <%= locals.account_email %></p>
+
+        <label for="account_type">Account Type:</label>
+        <select name="account_type" id="account_type">
+            <option value="Client" <% if (locals.account_type === 'Client') { %>selected<% } %>>Client</option>
+            <option value="Employee" <% if (locals.account_type === 'Employee') { %>selected<% } %>>Employee</option>
+            <option value="Admin" <% if (locals.account_type === 'Admin') { %>selected<% } %>>Admin</option>
+        </select>
+
+        <button type="submit">Update Role</button>
+        <input type="hidden" name="account_id" value="<%= locals.account_id %>">
+    </form>
+</div>

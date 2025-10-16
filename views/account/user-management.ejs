@@ -1,0 +1,24 @@
+<h1>User Account Management</h1>
+<%- messages() %>
+<p>Manage all user accounts in the system.</p>
+
+<table id="userManagementTable">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Account Type</th>
+            <th>Modify</th>
+        </tr>
+    </thead>
+    <tbody>
+        <% locals.users.forEach(user => { %>
+            <tr>
+                <td><%= user.account_firstname %> <%= user.account_lastname %></td>
+                <td><%= user.account_email %></td>
+                <td><%= user.account_type %></td>
+                <td><a href="/account/edit/<%= user.account_id %>">Edit Role</a></td>
+            </tr>
+        <% }) %>
+    </tbody>
+</table>

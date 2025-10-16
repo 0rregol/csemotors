@@ -176,4 +176,15 @@ Util.checkAccountType = (req, res, next) => {
     res.redirect("/account/login");
   }
 };
+/* ****************************************
+ * Middleware For Admin Authorization
+ * ************************************ */
+Util.checkAdminAuth = (req, res, next) => {
+  if (res.locals.loggedin && res.locals.accountData.account_type === 'Admin') {
+    next();
+  } else {
+    req.flash("notice", "You do not have permission to access this page.");
+    res.redirect("/account/login");
+  }
+}
 module.exports = Util;

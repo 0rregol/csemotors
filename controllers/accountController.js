@@ -194,4 +194,51 @@ async function logout(req, res) {
     res.clearCookie("jwt");
     return res.redirect("/");
 }
-module.exports = { buildLogin, buildRegister, registerAccount, accountLogin, buildAccountManagement, buildUpdateAccountView, updateAccountInfo, updatePassword, logout };
+/* ****************************************
+* Build User Management View (Admin Only)
+* *************************************** */
+async function buildUserManagementView(req, res, next) {
+  let nav = await utilities.getNav();
+  const users = await accountModel.getAllAccounts();
+  res.render("account/user-management", {
+    title: "User Management",
+    nav,
+    users,
+    errors: null,
+  });
+}
+
+/* ****************************************
+* Build Edit User View (Admin Only)
+* *************************************** */
+async function buildEditUserView(req, res, next) {
+  let nav = await utilities.getNav();
+  const account_id = parseInt(req.params.account_id);
+  const userData = await accountModel.getAccountById(account_id);
+  const userName = `${userData.account_firstname} ${userData.account_lastname}`;
+  res.render("account/edit-user", {
+    title: "Edit Account",
+    nav,
+    errors: null,
+    userName,
+    account_email: userData.account_email,
+    account_type: userData.account_type,
+    account_id: userData.account_id,
+  });
+}
+
+/* ****************************************
+* Process Account Type Update (Admin Only)
+* *************************************** */
+async function updateAccountType(req, res) {
+  const { account_id, account_type } = req.body;
+  const updateResult = await accountModel.updateAccountType(account_id, account_type);
+
+  if (updateResult) {
+    req.flash("notice", `The account type for ${updateResult.account_firstname} has been updated.`);
+  } else {
+    req.flash("notice", "Sorry, the update failed.");
+  }
+  res.redirect("/account/management");
+}
+module.exports = { buildLogin, buildRegister, registerAccount, accountLogin, buildAccountManagement, buildUpdateAccountView, updateAccountInfo, updatePassword, logout, buildUserManagementView, buildEditUserView, updateAccountType };

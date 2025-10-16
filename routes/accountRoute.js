@@ -12,4 +12,7 @@ router.get("/update/:account_id", utilities.handleAsyncErrors(accountController.
 router.post("/update-info", regValidate.updateAccountRules(), regValidate.checkUpdateData, utilities.handleAsyncErrors(accountController.updateAccountInfo));
 router.post("/update-password", regValidate.updatePasswordRules(), regValidate.checkUpdateData, utilities.handleAsyncErrors(accountController.updatePassword));
 router.get("/logout", utilities.handleAsyncErrors(accountController.logout));
+router.get("/management", utilities.checkAdminAuth, utilities.handleAsyncErrors(accountController.buildUserManagementView));
+router.get("/edit/:account_id", utilities.checkAdminAuth, utilities.handleAsyncErrors(accountController.buildEditUserView));
+router.post("/update-type", utilities.checkAdminAuth, utilities.handleAsyncErrors(accountController.updateAccountType));
 module.exports = router;

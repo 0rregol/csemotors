@@ -83,4 +83,24 @@ async function updatePassword(account_id, hashedPassword) {
     console.error("model error: " + error)
   }
 }
-module.exports = { registerAccount, getAccountByEmail, getAccountById, updateAccountInfo, updatePassword };
+/* *****************************
+* Get all accounts from the database
+* ***************************** */
+async function getAllAccounts() {
+  const data = await pool.query("SELECT account_id, account_firstname, account_lastname, account_email, account_type FROM account ORDER BY account_firstname");
+  return data.rows;
+}
+
+/* ***************************
+ * Update a user's account type
+ * ************************** */
+async function updateAccountType(account_id, account_type) {
+  try {
+    const sql = "UPDATE public.account SET account_type = $1 WHERE account_id = $2 RETURNING *";
+    const data = await pool.query(sql, [account_type, account_id]);
+    return data.rows[0];
+  } catch (error) {
+    console.error("model error: " + error);
+  }
+}
+module.exports = { registerAccount, getAccountByEmail, getAccountById, updateAccountInfo, updatePassword, getAllAccounts, updateAccountType };

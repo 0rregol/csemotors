@@ -14,3 +14,8 @@
     <p>Use the link below to manage the inventory.</p>
     <p><a href="/inv/">Go to Vehicle Management</a></p>
 <% } %>
+<% if (locals.accountData.account_type === 'Admin') { %>
+    <h3>User Management</h3>
+    <p>Use the link below to manage user accounts.</p>
+    <p><a href="/account/management">Go to User Management</a></p>
+<% } %>
