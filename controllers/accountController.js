@@ -88,7 +88,7 @@ async function accountLogin(req, res) {
       delete accountData.account_password;
     const accessToken = jwt.sign(accountData, process.env.ACCESS_TOKEN_SECRET, { expiresIn: 3600 });
     res.cookie("jwt", accessToken, { httpOnly: true, maxAge: 3600 * 1000 });
-    return res.redirect("/inv/");
+    return res.redirect("/account/");
   } else {
       req.flash("notice", "Please check your credentials and try again.");
     return res.status(400).render("account/login", {
